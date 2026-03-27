@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beauty Content Ops | AI Pipeline</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Hero Header -->
+    <header>
+      <div class="logo">
+        <span class="logo-icon">&#10022;</span>
+        <h1>Beauty Content Ops</h1>
+      </div>
+      <p class="subtitle">AI-Powered Content Pipeline for Beauty Brands</p>
+    </header>
+
+    <!-- Input Panel - Simplified -->
+    <section id="input-panel">
+      <div class="input-hero">
+        <h2>What product are we creating content for?</h2>
+        <p class="input-hint">Upload a product image or type the product name — we'll handle the rest.</p>
+      </div>
+
+      <!-- Image Upload Zone -->
+      <div id="upload-zone" class="upload-zone" onclick="document.getElementById('image-input').click()">
+        <input type="file" id="image-input" accept="image/*" hidden />
+        <div id="upload-placeholder" class="upload-placeholder">
+          <div class="upload-icon">&#128247;</div>
+          <p>Drop a product image here or <span class="upload-link">browse</span></p>
+          <p class="upload-hint">Our AI will analyze the image to identify the product</p>
+        </div>
+        <div id="upload-preview" class="upload-preview hidden">
+          <img id="preview-img" src="" alt="Product preview" />
+          <button class="remove-btn" onclick="event.stopPropagation(); removeImage()">&#10005;</button>
+        </div>
+      </div>
+
+      <div class="divider"><span>or type the product name</span></div>
+
+      <!-- Product Name Input -->
+      <div class="name-input-row">
+        <input type="text" id="product" placeholder="e.g. FHI Heat Stylus Thermal Styling Brush" />
+      </div>
+
+      <!-- Optional Fields (collapsed by default) -->
+      <details class="optional-section">
+        <summary>Advanced options</summary>
+        <div class="optional-grid">
+          <div class="field">
+            <label>Category</label>
+            <select id="category">
+              <option value="auto">Auto-detect</option>
+              <option value="hair styling tools">Hair Styling Tools</option>
+              <option value="hair care">Hair Care</option>
+              <option value="skincare">Skincare</option>
+              <option value="cosmetics">Cosmetics</option>
+              <option value="fragrance">Fragrance</option>
+              <option value="nail care">Nail Care</option>
+              <option value="body care">Body Care</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Competitors (optional)</label>
+            <input type="text" id="competitors" placeholder="e.g. Dyson, CHI, BaByliss" />
+          </div>
+          <div class="field">
+            <label>Avg. Views (optional)</label>
+            <input type="number" id="avg-views" placeholder="e.g. 5000" />
+          </div>
+        </div>
+      </details>
+
+      <!-- Launch Button -->
+      <button id="launch-btn" onclick="launchPipeline()">
+        Generate Content Strategy
+      </button>
+    </section>
+
+    <!-- Pipeline Stages -->
+    <section id="pipeline" class="hidden">
+      <!-- Stage 0 -->
+      <div class="stage" data-stage="0">
+        <div class="stage-header">
+          <div class="stage-number">0</div>
+          <div>
+            <h3>Audience Intelligence</h3>
+            <p class="stage-desc">Defining target personas & pain points</p>
+          </div>
+          <div class="stage-status" id="status-0">waiting</div>
+        </div>
+        <div class="agents-grid">
+          <div class="agent-card" id="agent-image_analyst">
+            <div class="agent-icon">&#128248;</div>
+            <div class="agent-name">Image Analyst</div>
+            <div class="agent-status">idle</div>
+          </div>
+          <div class="agent-card" id="agent-persona_builder">
+            <div class="agent-icon">&#128101;</div>
+            <div class="agent-name">Persona Builder</div>
+            <div class="agent-status">idle</div>
+          </div>
+          <div class="agent-card" id="agent-mismatch_detector" style="opacity:0.4">
+            <div class="agent-icon">&#128270;</div>
+            <div class="agent-name">Mismatch Detector</div>
+            <div class="agent-status">runs after Stage 2</div>
+          </div>
+        </div>
+        <div class="stage-output" id="output-0"></div>
+      </div>
+
+      <!-- Stage 1 -->
+      <div class="stage" data-stage="1">
+        <div class="stage-header">
+          <div class="stage-number">1</div>
+          <div>
+            <h3>Market Intelligence</h3>
+            <p class="stage-desc">Trends, competitors & performance diagnosis</p>
+          </div>
+          <div class="stage-status" id="status-1">waiting</div>
+        </div>
+        <div class="agents-grid">
+          <div class="agent-card" id="agent-trend_scout">
+            <div class="agent-icon">&#128293;</div>
+            <div class="agent-name">Trend Scout</div>
+            <div class="agent-status">idle</div>
+          </div>
+          <div class="agent-card" id="agent-competitor_analyst">
+            <div class="agent-icon">&#128373;</div>
+            <div class="agent-name">Competitor Analyst</div>
+            <div class="agent-status">idle</div>
+          </div>
+          <div class="agent-card" id="agent-performance_diagnostics">
+            <div class="agent-icon">&#128200;</div>
+            <div class="agent-name">Performance Diagnostics</div>
+            <div class="agent-status">idle</div>
+          </div>
+        </div>
+        <div class="stage-output" id="output-1"></div>
+      </div>
+
+      <!-- Stage 2 -->
+      <div class="stage" data-stage="2">
+        <div class="stage-header">
+          <div class="stage-number">2</div>
+          <div>
+            <h3>Platform Content Crews</h3>
+            <p class="stage-desc">Each platform has its own Lead Agent</p>
+          </div>
+          <div class="stage-status" id="status-2">waiting</div>
+        </div>
+        <div class="agents-grid">
+          <div class="agent-card platform-tiktok" id="agent-tiktok_lead">
+            <div class="agent-icon">&#127916;</div>
+            <div class="agent-name">TikTok Lead</div>
+            <div class="agent-sub">Script + Trend Adapter</div>
+            <div class="agent-status">idle</div>
+          </div>
+          <div class="agent-card platform-amazon" id="agent-amazon_lead">
+            <div class="agent-icon">&#128230;</div>
+            <div class="agent-name">Amazon Lead</div>
+            <div class="agent-sub">Listing + A+ Content</div>
+            <div class="agent-status">idle</div>
+          </div>
+          <div class="agent-card platform-instagram" id="agent-instagram_lead">
+            <div class="agent-icon">&#128247;</div>
+            <div class="agent-name">Instagram Lead</div>
+            <div class="agent-sub">Carousel + Reel</div>
+            <div class="agent-status">idle</div>
+          </div>
+        </div>
+        <div class="stage-output" id="output-2"></div>
+      </div>
+
+      <!-- Stage 2.5 -->
+      <div class="stage" data-stage="2.5">
+        <div class="stage-header">
+          <div class="stage-number">2.5</div>
+          <div>
+            <h3>Mismatch Detection</h3>
+            <p class="stage-desc">Content vs Persona vs Platform alignment</p>
+          </div>
+          <div class="stage-status" id="status-2-5">waiting</div>
+        </div>
+        <div class="agents-grid">
+          <div class="agent-card" id="agent-mismatch_detector_active">
+            <div class="agent-icon">&#9888;</div>
+            <div class="agent-name">Mismatch Detector</div>
+            <div class="agent-status">idle</div>
+          </div>
+        </div>
+        <div class="stage-output" id="output-2-5"></div>
+      </div>
+
+      <!-- Stage 3 -->
+      <div class="stage" data-stage="3">
+        <div class="stage-header">
+          <div class="stage-number">3</div>
+          <div>
+            <h3>Review Board</h3>
+            <p class="stage-desc">Multi-dimensional expert panel</p>
+          </div>
+          <div class="stage-status" id="status-3">waiting</div>
+        </div>
+        <div class="agents-grid">
+          <div class="agent-card reviewer" id="agent-brand_reviewer">
+            <div class="agent-icon">&#127912;</div>
+            <div class="agent-name">Brand Reviewer</div>
+            <div class="agent-score"></div>
+            <div class="agent-status">idle</div>
+          </div>
+          <div class="agent-card reviewer" id="agent-legal_reviewer">
+            <div class="agent-icon">&#9878;</div>
+            <div class="agent-name">FDA/Legal</div>
+            <div class="agent-score"></div>
+            <div class="agent-status">idle</div>
+          </div>
+          <div class="agent-card reviewer" id="agent-algorithm_reviewer">
+            <div class="agent-icon">&#9881;</div>
+            <div class="agent-name">Algorithm</div>
+            <div class="agent-score"></div>
+            <div class="agent-status">idle</div>
+          </div>
+          <div class="agent-card reviewer judge" id="agent-judge">
+            <div class="agent-icon">&#9878;</div>
+            <div class="agent-name">Final Judge</div>
+            <div class="agent-score"></div>
+            <div class="agent-status">idle</div>
+          </div>
+        </div>
+        <div class="stage-output" id="output-3"></div>
+      </div>
+
+      <!-- Stage 4: Output -->
+      <div class="stage output-stage" data-stage="4" id="final-output">
+        <div class="stage-header">
+          <div class="stage-number">4</div>
+          <div>
+            <h3>Content Package</h3>
+            <p class="stage-desc">Ready for Marketing Team</p>
+          </div>
+          <div class="stage-status" id="status-4">waiting</div>
+        </div>
+        <div id="content-package"></div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>Built by Xincheng (George) Ding | Multi-Agent Architecture powered by Claude API</p>
+      <p class="tech">Node.js + Express + Anthropic SDK | Inspired by CrewAI Flow patterns</p>
+    </footer>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

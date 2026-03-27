@@ -1,0 +1,14 @@
+{
+  "name": "beauty-content-ops",
+  "version": "1.0.0",
+  "description": "AI-powered beauty content operations pipeline for FHI Heat",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "express": "^4.21.0",
+    "dotenv": "^16.4.0"
+  }
+}
