@@ -226,18 +226,18 @@ function buildContentPackage(data) {
   const pkg = document.getElementById("content-package");
   if (!data || !data.content) return;
 
-  // Parse verdict
+  // Parse verdict (using safeParse to handle markdown fences)
   let verdict = "approve";
   let verdictSummary = "";
   let revisionNotes = [];
   try {
-    const v = typeof data.verdict === "string" ? JSON.parse(data.verdict) : data.verdict;
+    const v = safeParse(data.verdict);
     verdict = v.decision || "approve";
     verdictSummary = v.summary || "";
     revisionNotes = v.revision_notes || [];
   } catch {}
 
-  // Parse review scores
+  // Parse review scores (using safeParse to handle markdown fences)
   let reviewHTML = "";
   try {
     const reviews = [
@@ -246,7 +246,8 @@ function buildContentPackage(data) {
       { name: "Algorithm", data: data.reviews.algo, icon: "&#9881;" },
     ];
     reviewHTML = reviews.map(r => {
-      const parsed = typeof r.data === "string" ? JSON.parse(r.data) : r.data;
+      const parsed = safeParse(r.data);
+      if (parsed._raw) return ""; // skip if unparseable
       const score = parsed.score || 0;
       const pass = parsed.pass !== false;
       const color = score >= 70 ? "var(--green)" : score >= 50 ? "var(--orange)" : "var(--red)";
