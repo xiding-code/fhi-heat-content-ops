@@ -1,7 +1,7 @@
 {
   "name": "beauty-content-ops",
   "version": "1.0.0",
-  "description": "AI-powered beauty content operations pipeline for FHI Heat",
+  "description": "AI-powered multi-agent content operations pipeline for beauty brands",
   "scripts": {
     "dev": "node server.js",
     "start": "node server.js"

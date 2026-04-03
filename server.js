@@ -66,7 +66,7 @@ app.post("/api/pipeline", async (req, res) => {
 
     const [trends, competitor] = await Promise.all([
       marketAgents.trendScout(detectedCategory, "TikTok"),
-      marketAgents.competitorAnalyst(productName, competitors || "Dyson, CHI, BaByliss"),
+      marketAgents.competitorAnalyst(productName, competitors || "leading brands in category"),
     ]);
     send(1, "trend_scout", "done", trends);
     send(1, "competitor_analyst", "done", competitor);
@@ -101,7 +101,7 @@ app.post("/api/pipeline", async (req, res) => {
 
     // Stage 3: Review Board (parallel reviews, then judge)
     const allContent = `TikTok:\n${tiktok}\n\nAmazon:\n${amazon}\n\nInstagram:\n${instagram}`;
-    const brandGuidelines = `Brand: ${productName} by FHI Heat. Tone: professional, innovative, empowering. Premium positioning. Never use: cheap, basic, budget.`;
+    const brandGuidelines = `Brand: ${productName}. Category: ${detectedCategory}. Tone: professional, innovative, empowering. Premium positioning. Content must match the actual product category and brand identity. Never use: cheap, basic, budget.`;
 
     send(3, "brand_reviewer", "running");
     send(3, "legal_reviewer", "running");
